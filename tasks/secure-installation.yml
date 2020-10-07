@@ -6,6 +6,7 @@
     password: "{{ mysql_user_password }}"
     priv: '*.*:ALL,GRANT'
     state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
   when: mysql_user_name != mysql_root_username
 
 # Has to be after the password assignment, for idempotency.
@@ -83,4 +84,7 @@
   with_items: "{{ mysql_anonymous_hosts.stdout_lines|default([]) }}"
 
 - name: Remove MySQL test database.
-  mysql_db: "name='test' state=absent"
+  mysql_db:
+    name: test
+    state: absent
+    login_unix_socket: /var/run/mysqld/mysqld.sock
